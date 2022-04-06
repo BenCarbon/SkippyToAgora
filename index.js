@@ -15,7 +15,7 @@ fetch.fetchUrl(`https://uldizaax95.execute-api.us-west-1.amazonaws.com/token?cha
 });
 
 async function start() {
-	var browser = await puppeteer.launch({args: ['--no-sandbox', '--use-fake-ui-for-media-stream'], headless: true});
+	var browser = await puppeteer.launch({args: [/*'--no-sandbox', */'--use-fake-ui-for-media-stream'], headless: true});
 
 	for (var i = 0; i < config.cameras.length; i++) {
 		var page = await browser.newPage();
@@ -32,12 +32,17 @@ async function start() {
 		var cameraSelect = await page.evaluate(() => document.querySelectorAll('input.select-dropdown.dropdown-trigger')[0].dataset.target);
 
 		if (i == 0) {
-			console.log('\nCameras:')
+			console.log('\nCameras:');
 			var camCount = await page.$eval(`#${cameraSelect}`, el => el.childElementCount);
 			for (var x = 0; x < camCount; x++) {
 				console.log(`${x}: ${await page.$eval(`#${cameraSelect}${x}`, el => el.children[0].innerText)}`);
 			}
 			console.log('');
+		}
+
+		if (camCount == 0) {
+			console.log("No cameras found");
+			return;
 		}
 
 		// console.log(cameraSelect);
