@@ -15,7 +15,7 @@ fetch.fetchUrl(`https://uldizaax95.execute-api.us-west-1.amazonaws.com/token?cha
 });
 
 async function start() {
-	var browser = await puppeteer.launch({args: [/*'--no-sandbox', */'--use-fake-ui-for-media-stream'], headless: true});
+	var browser = await puppeteer.launch({args: ['--no-sandbox', '--use-fake-ui-for-media-stream'], headless: true});
 
 	for (var i = 0; i < config.cameras.length; i++) {
 		var page = await browser.newPage();
