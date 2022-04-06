@@ -25,19 +25,23 @@ async function start() {
 		await page.type('input#channel', config.channel);
 		await page.type('input#token', token);
 
-		await page.waitForTimeout(500);
+		await page.waitForTimeout(2000);
 		await page.click('div.collapsible-header.agora-secondary-bg');
+
 		await page.type('input#uid', config.cameras[i].id.toString());
 		
+		await page.waitForTimeout(500);
 		var cameraSelect = await page.evaluate(() => document.querySelectorAll('input.select-dropdown.dropdown-trigger')[0].dataset.target);
 
 		if (i == 0) {
 			console.log('\nCameras:');
 			var camCount = await page.$eval(`#${cameraSelect}`, el => el.childElementCount);
+			console.log(camCount);
 			for (var x = 0; x < camCount; x++) {
 				console.log(`${x}: ${await page.$eval(`#${cameraSelect}${x}`, el => el.children[0].innerText)}`);
 			}
 			console.log('');
+			//await page.screenshot({path: "screen.png"});
 		}
 
 		if (camCount == 0) {
@@ -47,20 +51,17 @@ async function start() {
 
 		// console.log(cameraSelect);
 		await page.waitForTimeout(500);
-		await page.click(`[data-target="${cameraSelect}"]`);
+		var camDropdown = await page.$('.select-dropdown.dropdown-trigger');
+		await camDropdown.evaluate(b => b.click());
 		await page.waitForTimeout(500);
-		await page.click(`#${cameraSelect}${config.cameras[i].cameraIndex}`);
+		var cam = await page.$(`#${cameraSelect}${config.cameras[i].cameraIndex}`);
+		await cam.evaluate(c => c.click());
 
-		// var resSelect = await page.evaluate(() => document.querySelectorAll('input.select-dropdown.dropdown-trigger')[1].dataset.target);
-		// // console.log(resSelect);
-		// await page.waitForTimeout(500);
-		// await page.click(`[data-target="${resSelect}"]`);
-		// await page.waitForTimeout(500);
-		// await page.click(`#${resSelect}3`);
 		await page.type('input#cameraResolution', config.cameras[i].stereo ? "1080p_2" : "720p");
 		
 		await page.evaluate(() => document.querySelector('#join').click());
 
 		console.log(`Streaming camera ${i + 1}`);
+		// await page.screenshot({path: "screen.png"});
 	}
 }
