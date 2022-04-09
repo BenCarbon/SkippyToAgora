@@ -1,4 +1,5 @@
 import RTCClient from './rtc-client'
+import AgoraRTC from 'agora-rtc-sdk'
 import {requestPermission, getDevices, Toast, serializeFormData, validator, resolutions} from './common'
 import './assets/style.css'
 import * as M from 'materialize-css'
@@ -10,12 +11,12 @@ $(() => {
       Toast.error('no camera or microphone permission!')
     }
     getDevices(function (devices) {
-    //   devices.audios.forEach(function (audio) {
-    //     $('<option/>', {
-    //       value: audio.value,
-    //       text: audio.name,
-    //     }).appendTo('#microphoneId')
-    //   })
+      devices.audios.forEach(function (audio) {
+        $('<option/>', {
+          value: audio.value,
+          text: audio.name,
+        }).appendTo('#microphoneId')
+      })
       devices.videos.forEach(function (video) {
         $('<option/>', {
           value: video.value,
@@ -71,7 +72,34 @@ $(() => {
     e.preventDefault()
     console.log('join')
     const params = serializeFormData()
+	console.log(params);
     if (validator(params, fields)) {
+      rtc._localStream = AgoraRTC.createStream({
+        streamID: params.uid,
+        audio: false,
+        video: true,
+        screen: false,
+        cameraId: params.cameraId
+      });
+      rtc.join(params).then(() => {
+        rtc.publish()
+      })
+    }
+  })
+
+  $('#joinAudio').on('click', function (e) {
+    e.preventDefault()
+    console.log('joinAudio')
+    const params = serializeFormData()
+    if (validator(params, fields)) {
+      rtc._localStream = AgoraRTC.createStream({
+		streamID: params.uid,
+		audio: true,
+		video: true,
+		screen: false,
+		microphoneId: params.microphoneId,
+		cameraId: params.cameraId
+      });
       rtc.join(params).then(() => {
         rtc.publish()
       })

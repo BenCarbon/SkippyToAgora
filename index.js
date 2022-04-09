@@ -15,7 +15,7 @@ fetch.fetchUrl(`https://uldizaax95.execute-api.us-west-1.amazonaws.com/token?cha
 });
 
 async function start() {
-	var browser = await puppeteer.launch({args: ['--no-sandbox', '--use-fake-ui-for-media-stream'], headless: true});
+	var browser = await puppeteer.launch({args: ['--no-sandbox', '--use-fake-ui-for-media-stream'], headless: false});
 
 	for (var i = 0; i < config.cameras.length; i++) {
 		var page = await browser.newPage();
@@ -32,13 +32,22 @@ async function start() {
 		
 		await page.waitForTimeout(500);
 		var cameraSelect = await page.evaluate(() => document.querySelectorAll('input.select-dropdown.dropdown-trigger')[0].dataset.target);
+		var micSelect = await page.evaluate(() => document.querySelectorAll('input.select-dropdown.dropdown-trigger')[1].dataset.target);
 
 		if (i == 0) {
 			console.log('\nCameras:');
 			var camCount = await page.$eval(`#${cameraSelect}`, el => el.childElementCount);
-			console.log(camCount);
+			// console.log(camCount);
 			for (var x = 0; x < camCount; x++) {
 				console.log(`${x}: ${await page.$eval(`#${cameraSelect}${x}`, el => el.children[0].innerText)}`);
+			}
+			console.log('');
+
+			console.log('\Mics:');
+			var micCount = await page.$eval(`#${micSelect}`, el => el.childElementCount);
+			// console.log(camCount);
+			for (var x = 0; x < micCount; x++) {
+				console.log(`${x}: ${await page.$eval(`#${micSelect}${x}`, el => el.children[0].innerText)}`);
 			}
 			console.log('');
 			//await page.screenshot({path: "screen.png"});
@@ -58,8 +67,18 @@ async function start() {
 		await cam.evaluate(c => c.click());
 
 		await page.type('input#cameraResolution', config.cameras[i].stereo ? "1080p_2" : "720p");
-		
-		await page.evaluate(() => document.querySelector('#join').click());
+
+		if (config.cameras[i].micIndex != null) {
+			var micDropdown = (await page.$$('.select-dropdown.dropdown-trigger'))[1];
+			await micDropdown.evaluate(b => b.click());
+			await page.waitForTimeout(500);
+			var mic = await page.$(`#${micSelect}${config.cameras[i].micIndex}`);
+			await mic.evaluate(m => m.click());
+
+			await page.evaluate(() => document.querySelector('#joinAudio').click());
+		} else {
+			await page.evaluate(() => document.querySelector('#join').click());
+		}
 
 		console.log(`Streaming camera ${i + 1}`);
 		// await page.screenshot({path: "screen.png"});
