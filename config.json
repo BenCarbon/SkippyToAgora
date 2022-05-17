@@ -1,7 +1,15 @@
 {
+	"appId": "",
 	"channel": "skippy",
 	"cameras": [
 		{"id": 1, "cameraIndex": 0, "stereo": true},
 		{"id": 2, "cameraIndex": 3, "stereo": true}
-	]
+	],
+	"bucket": {
+		"name": "",
+		"region": 2,
+		"accessKey": "",
+		"secretKey": ""
+	},
+	"authKey": ""
 }
