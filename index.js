@@ -110,64 +110,65 @@ function record() {
 				token: token,
 				recordingConfig: {
 					maxIdleTime: 5,
-					streamTypes: 2,
-					audioProfile: 1,
+					streamTypes: 1,
+					streamMode: "default",
+					// audioProfile: 1,
 					channelType: 0,
 					videoStreamType: 0,
-					transcodingConfig: {
-						height: 1080,
-						width: 1920,
-						bitrate: 3150,
-						fps: 30,
-						mixedVideoLayout: 3,
-						layoutConfig: [
-							{
-								uid: "1",
-								x_axis: 0.0,
-								y_axis: 0.0,
-								width: 0.5,
-								height: 0.5
-							},
-							{
-								uid: "2",
-								x_axis: 0.5,
-								y_axis: 0.0,
-								width: 0.5,
-								height: 0.5
-							},
-							{
-								uid: "3",
-								x_axis: 0.0,
-								y_axis: 0.5,
-								width: 0.5,
-								height: 0.5
-							},
-							{
-								uid: "4",
-								x_axis: 0.5,
-								y_axis: 0.5,
-								width: 0.5,
-								height: 0.5
-							},
-						]
-					},
+					// transcodingConfig: {
+					// 	height: 1080,
+					// 	width: 1920,
+					// 	bitrate: 3150,
+					// 	fps: 30,
+					// 	mixedVideoLayout: 3,
+					// 	layoutConfig: [
+					// 		{
+					// 			uid: "1",
+					// 			x_axis: 0.0,
+					// 			y_axis: 0.0,
+					// 			width: 0.5,
+					// 			height: 0.5
+					// 		},
+					// 		{
+					// 			uid: "2",
+					// 			x_axis: 0.5,
+					// 			y_axis: 0.0,
+					// 			width: 0.5,
+					// 			height: 0.5
+					// 		},
+					// 		{
+					// 			uid: "3",
+					// 			x_axis: 0.0,
+					// 			y_axis: 0.5,
+					// 			width: 0.5,
+					// 			height: 0.5
+					// 		},
+					// 		{
+					// 			uid: "4",
+					// 			x_axis: 0.5,
+					// 			y_axis: 0.5,
+					// 			width: 0.5,
+					// 			height: 0.5
+					// 		},
+					// 	]
+					// },
 					subscribeVideoUids: [
 						"1",
 						"2",
 						"3",
 						"4"
 					],
-					subscribeAudioUids: [
-						"1",
-						"2",
-						"3",
-						"4"
-					],
+					// subscribeAudioUids: [
+					// 	"1",
+					// 	"2",
+					// 	"3",
+					// 	"4"
+					// ],
 					subscribeUidGroup: 0
 				},
-				recordingFileConfig: {
-					avFileType: ["hls", "mp4"] 
-				},
+				// recordingFileConfig: {
+				// 	avFileType: ["hls", "mp4"] 
+				// },
 				storageConfig: {
 					bucket: config.bucket.name,
 					region: config.bucket.region,
@@ -184,12 +185,12 @@ function record() {
 		}
 	
 		request.post({
-			url: `https://api.agora.io/v1/apps/01c84bffc1d14fe3a6796d4e0726a4cb/cloud_recording/resourceid/${resourceid}/mode/mix/start`,
+			url: `https://api.agora.io/v1/apps/01c84bffc1d14fe3a6796d4e0726a4cb/cloud_recording/resourceid/${resourceid}/mode/individual/start`,
 			headers: {'content-type': 'application/json;charset=utf-8', 'Authorization': config.authKey},
 			body: JSON.stringify(recordBody)
 		}, function(error, response, body) {
 			if (response.statusCode == 200) {
-			console.log('Recording started');
+				console.log('Recording started');
 				// console.log(response.statusCode);
 				// console.log(JSON.parse(body));
 				// console.log('resourceId: ' + JSON.parse(body).resourceId);
